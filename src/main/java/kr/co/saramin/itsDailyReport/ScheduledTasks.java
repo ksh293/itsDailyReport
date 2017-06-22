@@ -36,6 +36,7 @@ public class ScheduledTasks {
 	
 	private final static String dev1Team = "개발1팀";
 	private final static String dev2Team = "개발2팀";
+	private final static String uiDevTeam = "UI개발팀";
 	
 	/**
 	 * 매일 새벽 5시에 개발1,2팀 어제 변경된 ITS 이력을 Report로 생성, WIKI에 페이지를 자동으로 생성한다.
@@ -46,6 +47,7 @@ public class ScheduledTasks {
 		
 		this.execute(dev1Team);
 		this.execute(dev2Team);
+		this.execute(uiDevTeam);
 		
 	}
 	/**
@@ -67,6 +69,8 @@ public class ScheduledTasks {
 			devTeamQuery = requestQuery.ServiceDev1Team;
 		}else if("개발2팀".equals(devTeam)){
 			devTeamQuery = requestQuery.ServiceDev2Team;
+		}else if("UI개발팀".equals(devTeam)){
+			devTeamQuery = requestQuery.UIDevTeam;
 		}
 
 		IssueQueryResult devTeamResult = jiraIssueService.getIssuesFromQuery(devTeamQuery);
@@ -89,12 +93,11 @@ public class ScheduledTasks {
 		}
 	}
 	
-/*
+
 	public static void main(String[] args) throws Exception {
 		ScheduledTasks test = new ScheduledTasks();
-		test.execute(dev1Team);
-		test.execute(dev2Team);
+		test.execute(uiDevTeam);
 	}
-	*/
+	
 	
 }

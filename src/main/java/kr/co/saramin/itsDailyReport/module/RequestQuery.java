@@ -6,5 +6,7 @@ public class RequestQuery {
 	public String ServiceDev1Team = "filter=14009&expand=changelog";
 	//개발2팀 필터 조건
 	public String ServiceDev2Team = "filter=14010&expand=changelog";
+	//UI개발팀 필터 조건
+	public String UIDevTeam = "filter=14206&expand=changelog";
 	
 }
