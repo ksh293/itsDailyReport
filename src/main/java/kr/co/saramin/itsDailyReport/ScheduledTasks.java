@@ -53,6 +53,9 @@ public class ScheduledTasks {
 	/**
 	 * 1. 개발1,2팀을 구분하여 각각의 리포트를 생성하기 위한 JIRA API 호출
 	 * 2. 응답받은 데이터를 ReportObject 객체에 셋팅
+	 * 		1) jira api의 응답은 한번에 최대 50개 까지 받을 수 있다.
+	 * 		2) total이 50개가 넘어가면 startAt = 50 * i 개(50의 배수)로 쿼리를 다시 세팅하여 api를 호출한다.
+	 * 		3) 호출하여 세팅한 객체를 devTeamResult 객체의 Issues에 add한다.
 	 * 3. ReportObject 객체를 파라미터로 넘겨 HtmlTemplate을 생성
 	 * 4. 생성한 Template으로 Confluence API를 호출하여 WIKI 특정 공간에 새 리포트 페이지 생성
 	 * @param devTeam
@@ -76,8 +79,16 @@ public class ScheduledTasks {
 		IssueQueryResult devTeamResult = jiraIssueService.getIssuesFromQuery(devTeamQuery);
 		
 		if(0 < devTeamResult.getTotal()){
-
 			
+			for(int i = 1; i * 50 < devTeamResult.getTotal(); i++) { 
+				
+				IssueQueryResult devTeamResultPag = jiraIssueService.getIssuesFromQuery(devTeamQuery + "&startAt=" + i * 50);
+				
+				for(int j = 0; j < (devTeamResult.getTotal() - (i * 50)); j++){
+					devTeamResult.getIssues().add(devTeamResultPag.getIssues().get(j));
+				}
+				
+			}			
 			jiraIssueService.addWorkLogFields(devTeamResult);
 			
 			for(int i = 0; i < devTeamResult.getTotal(); i++) {
@@ -96,6 +107,8 @@ public class ScheduledTasks {
 
 	public static void main(String[] args) throws Exception {
 		ScheduledTasks test = new ScheduledTasks();
+		test.execute(dev1Team);
+		test.execute(dev2Team);
 		test.execute(uiDevTeam);
 	}
 	
